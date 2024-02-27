@@ -77,7 +77,7 @@ function setDifference<T>(a: Set<T>, b: Set<T>): Set<T> {
 const parser = new argparse.ArgumentParser();
 parser.addArgument('--git-protocol', {
   action: 'storeTrue',
-  help: 'Use the git protocal rather than the http protocol when cloning repos.'
+  help: 'Use the git protocol rather than the http protocol when cloning repos.'
 });
 
 parser.addArgument('--registry', {
@@ -203,15 +203,15 @@ async function publish(pkg: string, registry: string, otp?: string,
       await retry(() =>
           run(`${login}yarn --registry '${registry}' publish-npm ${dashes} ${otpFlag} --tag=${tag} --force`));
     } else {
-      // Publish the package to the registry.
-      await retry(() =>
-          run(`${login}npm --registry '${registry}' publish ${otpFlag}`));
-
       // Special case for tfjs-node(-gpu), which must upload the node addon
       // to GCP as well. Only do this when publishing to NPM.
       if (registry === NPM_REGISTRY && pkg.startsWith('tfjs-node')) {
         $('yarn build-and-upload-addon publish');
       }
+
+      // Publish the package to the registry.
+      await retry(() =>
+          run(`${login}npm --registry '${registry}' publish --tag=${tag} ${otpFlag}`));
     }
     console.log(`Published ${pkg} to ${registry}.`);
 
